@@ -1,6 +1,7 @@
 package edu.kit.wbk.smartfantaapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -136,6 +138,25 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
             Toast.makeText(this, R.string.only_on_m300, Toast.LENGTH_LONG).show();
             finish();
         }
+
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            Intent i = new Intent(getApplicationContext(), RouteActivity.class);
+            startActivity(i);
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        System.exit(0);
+        return true;
     }
 
     /**
