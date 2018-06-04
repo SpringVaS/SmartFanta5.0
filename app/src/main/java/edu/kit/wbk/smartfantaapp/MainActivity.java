@@ -1,15 +1,9 @@
 package edu.kit.wbk.smartfantaapp;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,7 +11,7 @@ import com.vuzix.sdk.barcode.ScanResult;
 import com.vuzix.sdk.barcode.ScannerFragment;
 import com.vuzix.sdk.barcode.ScanningRect;
 
-import java.io.IOException;
+import edu.kit.wbk.smartfantaapp.data.QrCode;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
@@ -25,7 +19,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private View infoView;
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
-    private ScanResult[] scanResults;
+    private QrCode[] scanResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,24 +57,6 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     }
 
     /**
-     * Helper method to show a scan result
-     *
-     * @param bitmap -  the bitmap in which barcodes were found
-     * @param result -  an array of ScanResult
-     */
-    private void showScanResult(Bitmap bitmap, ScanResult result) {
-        // ScanResultFragment scanResultFragment = new ScanResultFragment();
-        // Bundle args = new Bundle();
-        // args.putParcelable(ScanResultFragment.ARG_BITMAP, bitmap);
-        // args.putParcelable(ScanResultFragment.ARG_SCAN_RESULT, result);
-        // scanResultFragment.setArguments(args);
-        // getFragmentManager().beginTransaction().replace(R.id.fragment_container, scanResultFragment).commit();
-        // Log.d("zeug", result.getText());
-        // Log.d("zeug 2", result.getLocation().toString());
-        // Log.d("zeug", result.getType().name());
-    }
-
-    /**
      * This callback gives us the scan result.  This is relayed through mScannerListener.onScanResult
      *
      * This sample calls a helper class to display the result to the screen
@@ -89,12 +65,19 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
      * @param results -  an array of ScanResult
      */
     private void onScanFragmentScanResult(Bitmap bitmap, ScanResult[] results) {
-        // showScanResult(bitmap, results[0]);
-        Log.d("LOC", results.length + "");
-
-        this.scanResults = results;
+        this.scanResults = processResults(results);
         this.overlayView.setScanResults(this.scanResults);
         this.overlayView.setZ(100);
+    }
+
+    private QrCode[] processResults(ScanResult[] results) {
+        final float scale = 1.f / 3;
+        QrCode[] codes = new QrCode[results.length];
+        for(int i = 0; i < codes.length; i++) {
+            codes[i] = new QrCode(results[i].getLocation(), results[i].getText());
+            codes[i].scalePoints(scale);
+        }
+        return codes;
     }
 
     /**
@@ -138,25 +121,6 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
             Toast.makeText(this, R.string.only_on_m300, Toast.LENGTH_LONG).show();
             finish();
         }
-
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-
-        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-            Intent i = new Intent(getApplicationContext(), RouteActivity.class);
-            startActivity(i);
-            return true;
-        }
-
-        return super.onKeyUp(keyCode, event);
-    }
-
-    @Override
-    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        System.exit(0);
-        return true;
     }
 
     /**
@@ -172,31 +136,5 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         scannerFragment.setArguments(args);
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, scannerFragment).commit();
         scannerFragment.setListener(mScannerListener);     // Required to get scan results
-    }
-
-
-
-    /**
-     * A best practice is to give some audible feedback during scan operations. This beeps.
-     */
-    private void beep() {
-        MediaPlayer player = new MediaPlayer();
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.release();
-            }
-        });
-        try {
-            AssetFileDescriptor file = getResources().openRawResourceFd(R.raw.beep);
-            player.setDataSource(file.getFileDescriptor(), file.getStartOffset(), file.getLength());
-            file.close();
-            player.setVolume(.1f, .1f);
-            player.prepare();
-            player.start();
-        } catch (IOException e) {
-            player.release();
-        }
     }
 }
