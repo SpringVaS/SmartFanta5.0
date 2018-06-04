@@ -13,15 +13,17 @@ import com.vuzix.sdk.barcode.ScanResult;
 import com.vuzix.sdk.barcode.ScannerFragment;
 import com.vuzix.sdk.barcode.ScanningRect;
 
+import edu.kit.wbk.smartfantaapp.data.Order;
 import edu.kit.wbk.smartfantaapp.data.QrCode;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
-
     private View infoView;
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
     private QrCode[] scanResults;
+
+    private Order currentOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         infoView.setVisibility(View.GONE);
 
         overlayView = (OverlayView) findViewById(R.id.overlayView);
+        currentOrder = null;
 
         createScannerListener();
     }
@@ -125,6 +128,12 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         }
     }
 
+    private boolean receivedOrder () {
+        currentOrder = Order.getOrderOne();
+        return true;
+
+    }
+
     /**
      * Shows the scanner fragment in our activity
      */
@@ -143,10 +152,13 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
 
-        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+        if (keyCode == KeyEvent.KEYCODE_ENTER && currentOrder != null) {
             Intent intent = new Intent(this, RouteActivity.class);
+            intent.putExtra(Order.ORDER, currentOrder);
             startActivity(intent);
             return true;
+        } else if (keyCode == 22){
+            receivedOrder();
         }
 
         return super.onKeyUp(keyCode, event);
