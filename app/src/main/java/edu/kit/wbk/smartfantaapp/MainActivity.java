@@ -21,7 +21,9 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
 
     private View infoView;
+    private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
+    private ScanResult[] scanResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         // Hide the instructions until we have permission granted
         infoView = findViewById(R.id.scan_instructions);
         infoView.setVisibility(View.GONE);
+
+        overlayView = (OverlayView) findViewById(R.id.overlayView);
 
         createScannerListener();
     }
@@ -83,7 +87,12 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
      * @param results -  an array of ScanResult
      */
     private void onScanFragmentScanResult(Bitmap bitmap, ScanResult[] results) {
-        showScanResult(bitmap, results[0]);
+        // showScanResult(bitmap, results[0]);
+        Log.d("LOC", results.length + "");
+
+        this.scanResults = results;
+        this.overlayView.setScanResults(this.scanResults);
+        this.overlayView.setZ(100);
     }
 
     /**
