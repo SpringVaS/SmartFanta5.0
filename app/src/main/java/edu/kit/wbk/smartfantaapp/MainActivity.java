@@ -1,9 +1,11 @@
 package edu.kit.wbk.smartfantaapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -137,4 +139,17 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, scannerFragment).commit();
         scannerFragment.setListener(mScannerListener);     // Required to get scan results
     }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            Intent intent = new Intent(this, RouteActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
+    }
+
 }
