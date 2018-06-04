@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SmartFantaApp</string>
+    <string name="main_activity_name">Barcode</string>
+    <string name="grant_camera_permission">To use the barcode scanner, please grant camera permissions and try again.</string>
+    <string name="scanner_error_message">Unable to open scanner!</string>
+    <string name="scan_instructions">Place a barcode inside the viewfinder rectangle to scan it.</string>
+    <string name="only_on_m300">Barcode SDK only runs on Vuzix M300</string>
 </resources>
