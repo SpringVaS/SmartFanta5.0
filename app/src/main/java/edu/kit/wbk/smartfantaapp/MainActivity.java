@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -68,8 +69,9 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         // args.putParcelable(ScanResultFragment.ARG_SCAN_RESULT, result);
         // scanResultFragment.setArguments(args);
         // getFragmentManager().beginTransaction().replace(R.id.fragment_container, scanResultFragment).commit();
-        beep();
-        showScanner();
+        // Log.d("zeug", result.getText());
+        // Log.d("zeug 2", result.getLocation().toString());
+        // Log.d("zeug", result.getType().name());
     }
 
     /**
@@ -81,8 +83,6 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
      * @param results -  an array of ScanResult
      */
     private void onScanFragmentScanResult(Bitmap bitmap, ScanResult[] results) {
-        ScannerFragment scannerFragment = (ScannerFragment)getFragmentManager().findFragmentById(R.id.fragment_container);
-        scannerFragment.setListener(null);
         showScanResult(bitmap, results[0]);
     }
 
@@ -136,7 +136,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         ScannerFragment scannerFragment = new ScannerFragment();
         Bundle args = new Bundle();
         // A rectangle must be defined for the scanner to function. This is a recommended default.
-        args.putParcelable(ScannerFragment.ARG_SCANNING_RECT, new ScanningRect(.6f, .75f));
+        args.putParcelable(ScannerFragment.ARG_SCANNING_RECT, new ScanningRect(1, 1));
         // Zoom-in mode is recommended for scanning hand-held barcodes
         args.putBoolean(ScannerFragment.ARG_ZOOM_IN_MODE, true );
         scannerFragment.setArguments(args);
