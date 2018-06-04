@@ -16,18 +16,43 @@ import com.vuzix.sdk.barcode.ScanningRect;
 
 import java.io.IOException;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements PermissionsFragment.Listener {
+    private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
 
+    private View infoView;
     private ScannerFragment.Listener mScannerListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        // This is a best practice on the M300. Once the activity is started, the user will likely
+        // look straight down to scan a barcode. Allow left and right eye operation, but lock it
+        // in once started
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
+        // Since the Vuzix M300 API is level 23, always use runtime permissions
+        PermissionsFragment permissionsFragment = (PermissionsFragment)getFragmentManager().findFragmentByTag(TAG_PERMISSIONS_FRAGMENT);
+        if (permissionsFragment == null) {
+            permissionsFragment = new PermissionsFragment();
+            getFragmentManager().beginTransaction().add(permissionsFragment, TAG_PERMISSIONS_FRAGMENT).commit();
+        }
+        // Register as a PermissionsFragment.Listener so our permissionsGranted() is called
+        permissionsFragment.setListener(this);
+
+        // Hide the instructions until we have permission granted
+        infoView = findViewById(R.id.scan_instructions);
+        infoView.setVisibility(View.GONE);
+
         createScannerListener();
+    }
+
+    /**
+     * Called upon permissions being granted. This is the only way we show the scanner with API 23
+     */
+    @Override
+    public void permissionsGranted() {
+        showScanner();
     }
 
     /**
@@ -44,6 +69,7 @@ public class MainActivity extends Activity {
         // scanResultFragment.setArguments(args);
         // getFragmentManager().beginTransaction().replace(R.id.fragment_container, scanResultFragment).commit();
         beep();
+        showScanner();
     }
 
     /**
@@ -101,7 +127,6 @@ public class MainActivity extends Activity {
             Toast.makeText(this, R.string.only_on_m300, Toast.LENGTH_LONG).show();
             finish();
         }
-        showScanner();
     }
 
     /**
