@@ -15,6 +15,7 @@ import com.vuzix.sdk.barcode.ScanningRect;
 
 import edu.kit.wbk.smartfantaapp.data.Order;
 import edu.kit.wbk.smartfantaapp.data.QrCode;
+import edu.kit.wbk.smartfantaapp.data.Tracker;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
@@ -51,6 +52,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         currentOrder = null;
 
         createScannerListener();
+
+        // Tracker.main();
     }
 
     /**
