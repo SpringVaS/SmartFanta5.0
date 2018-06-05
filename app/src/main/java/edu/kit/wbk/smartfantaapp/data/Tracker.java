@@ -38,9 +38,9 @@ public class Tracker {
         String zstring = answera.substring(indexz + 3, indexz + 8);
         int indexy = answera.indexOf("y");
         String ystring = answera.substring(indexy + 3, indexy + 8);
-        Log.e("test",xstring);
+        // Log.e("test",xstring);
         //asldkjf
-        Log.e("test", zstring);
+        // Log.e("test", zstring);
         double x = 0;
         double y = 0;
         double z = 0;
@@ -49,7 +49,7 @@ public class Tracker {
         y = Double.valueOf(ystring);//person
 
         if (z <= -8 && z > -12) {
-            Log.e("test",Tracker.SHELF);
+            // Log.e("test",Tracker.SHELF);
 
             return (Tracker.SHELF);
             /*if (x <= 10.8 && x > 11.8) {
@@ -65,11 +65,11 @@ public class Tracker {
             }*/
         } else if (z <= -4.5 && z >= -6) {
             if (x <= 10) {
-                Log.e("test","Presse 4");
+                // Log.e("test","Presse 4");
 
                 return ("Presse 4");
             } else {
-                Log.e("test","Presse 2");
+                // Log.e("test","Presse 2");
 
                 return ("Presse 2");
             }
@@ -100,10 +100,10 @@ public class Tracker {
         z = Double.valueOf(zstring);
         y = Double.valueOf(ystring);
         if (z <= -5 && y > 1.1) {
-            Log.e("test", "False");
+            // Log.e("test", "False");
             Tracker.orderPlaced = false;
         } else if (z > -5 && y <= 1.1) {
-            Log.e("test", "True");
+            // Log.e("test", "True");
             return true;
         }
         //Lager
@@ -152,7 +152,7 @@ public class Tracker {
                     builder.append(System.lineSeparator());
                 }
 
-                Log.e("Tracker", builder.toString());
+                // Log.e("Tracker", builder.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -161,7 +161,7 @@ public class Tracker {
                 if (json_crazy_stuff_lager(builder.toString())) {
                     if (!(Tracker.orderPlaced)) {
                         Tracker.orderPlaced = true;
-                        Log.e("Tracker", "placed Order once");
+                        // Log.e("Tracker", "placed Order once");
                         return PLACE_ORDER;
                     }
                 }
