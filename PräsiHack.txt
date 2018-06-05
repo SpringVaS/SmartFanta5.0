@@ -1,0 +1,17 @@
+Wer braucht es?
+Kommisionierer
+Warum?
+fehleranfälliges Picking nach Liste
+Prognosen und Wegführung machen Arbeit effizienter schneller, weniger anstrengend
+Warum hilft es?
+Zeigt deutlicher was korrektes Item ist
+Automatische Aufträge
+Wegplanung macht effzienter
+Wie verkauft man es?
+Gesundheit der Arbeiter wird erhöht.
+
+Demo Ablauf:
+Vorkommissionieren eines Kundenauftrags
+NAchbestellung von Station
+beides gleichzeitig abliefern
+Stream auf Bildschirm, was die Brille sieht. 
