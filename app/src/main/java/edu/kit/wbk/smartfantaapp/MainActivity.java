@@ -39,6 +39,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private ScannerFragment.Listener mScannerListener;
     private QrCode[] scanResults = {};
     private Intent intent;
+    private boolean leftShelf = false;
 
    // private List<Order> orderQueue = new LinkedList<>();
     private Order currentOrder;
@@ -272,8 +273,9 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
             //if (resultCode == RESULT_OK) {
                 orderQueue.remove(currentOrder);
                 this.products.clear();
-                overlayView.setProducts(this.products.values());
+                //overlayView.setProducts(this.products.values());
                 currentOrder = null;
+                updateFromGroup();
                 Log.i("Main", "Back and done");
             //}
         }
@@ -287,10 +289,15 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         if (info.equals(Tracker.PLACE_ORDER)) {
             receivedOrder(Order.getRefillOrder());
         } else if (info.equals(Tracker.SHELF)) {
-            if(subActivity != null) {
+            if(subActivity != null && leftShelf) {
+                leftShelf = false;
                 subActivity.setResult(RESULT_OK);
                 subActivity.finish();
             }
+        }
+
+        if (info.equals("Presse 2") || info.equals("Presse 4")) {
+            leftShelf = true;
         }
 
         if(this.shouldTrack) {

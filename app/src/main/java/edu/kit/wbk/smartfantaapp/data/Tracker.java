@@ -65,11 +65,11 @@ public class Tracker {
             }*/
         } else if (z <= -4.5 && z >= -6) {
             if (x <= 10) {
-                Log.e("test","Presse4");
+                Log.e("test","Presse 4");
 
                 return ("Presse 4");
             } else {
-                Log.e("test","Presse2");
+                Log.e("test","Presse 2");
 
                 return ("Presse 2");
             }
@@ -101,6 +101,7 @@ public class Tracker {
         y = Double.valueOf(ystring);
         if (z <= -5 && y > 1.1) {
             Log.e("test", "False");
+            Tracker.orderPlaced = false;
         } else if (z > -5 && y <= 1.1) {
             Log.e("test", "True");
             return true;
@@ -162,10 +163,7 @@ public class Tracker {
                         Tracker.orderPlaced = true;
                         Log.e("Tracker", "placed Order once");
                         return PLACE_ORDER;
-
                     }
-                } else {
-                    Tracker.orderPlaced = false;
                 }
                 return s;
             } catch (StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException e) {
