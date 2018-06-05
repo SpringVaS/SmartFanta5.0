@@ -26,7 +26,7 @@ public class Tracker {
         String[] a = answer.split("\\}\\}");
         String answera = "";
         for (int i = 0; i < a.length; i++) {
-            if (a[i].contains("26627")) {
+            if (a[i].contains("26636")) {
                 answera = a[i];
             }
         }
@@ -45,8 +45,11 @@ public class Tracker {
         z = Double.valueOf(zstring);
         y = Double.valueOf(ystring);//person
 
-        if (z <= -9 && z > -10) {
-            if (x <= 10.8 && x > 11.8) {
+        if (z <= -8 && z > -12) {
+            Log.e("test","Regal");
+
+            return ("Regal");
+            /*if (x <= 10.8 && x > 11.8) {
                 Log.e("test", "Regal 1");
                 return ("Regal 1");
 
@@ -56,24 +59,28 @@ public class Tracker {
             } else if (x <= 13.1 && x >= 14.0) {
                 Log.e("test", "Regal 3");
                 return ("Regal 3");
-            }
+            }*/
         } else if (z <= -4.5 && x >= -6) {
             if (x <= 10) {
+                Log.e("test","Presse4");
+
                 return (" Presse 4");
             } else {
+                Log.e("test","Presse2");
+
                 return ("Presse 2");
             }
         } else return "somewhere";
 
 
-        return "somewhere";
+        //return "somewhere";
     }
 
     public static boolean json_crazy_stuff_lager(String answer) {
         String[] a = answer.split("\\}\\}");
         String answerb = "";
         for (int i = 0; i < a.length; i++) {
-            if (a[i].contains("26636")) {
+            if (a[i].contains("26627")) {
                 answerb = a[i];
             }
         }
