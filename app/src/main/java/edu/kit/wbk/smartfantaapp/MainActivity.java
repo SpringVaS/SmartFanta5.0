@@ -53,7 +53,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
         createScannerListener();
 
-        // Tracker.main();
+        Tracker.main();
     }
 
     /**

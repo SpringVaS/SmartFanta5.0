@@ -5,18 +5,11 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContextBuilder;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.HttpClients;
 
 public class Tracker {
     public static String json_crazy_stuff(String answer) {
@@ -49,17 +42,11 @@ public class Tracker {
             }
         } else return null;
 
-        return null;
+    return null;
     }
-
     public static void main() {
-        StringBuilder stringBuilder = new StringBuilder();
-        try {
-            SSLContextBuilder builder = new SSLContextBuilder();
-            builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-            CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory(
-                    null).build();
-
+        StringBuilder builder = new StringBuilder();
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet request = new HttpGet("http://129.13.10.241:8090/kinexon/data/current/all/");
             HttpResponse response = client.execute(request);
 
@@ -69,18 +56,14 @@ public class Tracker {
             String line;
 
             while ((line = bufReader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append(System.lineSeparator());
+                builder.append(line);
+                builder.append(System.lineSeparator());
             }
 
-            Log.d("Tracker", stringBuilder.toString());
-            json_crazy_stuff(stringBuilder.toString());
+            Log.d("Tracker", builder.toString());
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
         }
+        json_crazy_stuff(builder.toString());
     }
 }
