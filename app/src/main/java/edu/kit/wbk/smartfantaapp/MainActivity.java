@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vuzix.sdk.barcode.ScanResult;
@@ -33,7 +34,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     protected static final String PICKED_PRODUCTS = "picked products";
 
     public  List<Order> orderQueue = new LinkedList<>();
-    private View infoView;
+    private TextView infoView;
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
     private QrCode[] scanResults = {};
@@ -76,8 +77,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         permissionsFragment.setListener(this);
 
         // Hide the instructions until we have permission granted
-        infoView = findViewById(R.id.scan_instructions);
-        infoView.setVisibility(View.GONE);
+        infoView = (TextView) findViewById(R.id.scan_instructions);
 
         overlayView = (OverlayView) findViewById(R.id.overlayView);
         this.overlayView.setZ(100);
@@ -85,7 +85,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         intent = null;
 
         createScannerListener();
-
+        updateFromGroup();
 
         final Handler handler = new Handler();
         Timer timer = new Timer(false);
@@ -147,6 +147,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
                     code.setRequestedAmount("Regal 4");
                 }
                 this.overlayView.setCurrentGroup(group);
+                updateFromGroup();
             }
             codes[i] = code;
         }
@@ -210,9 +211,22 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         }
         currentOrder = orderQueue.get(0);
         this.products = currentOrder.getProductsToPick();
-        this.overlayView.setProducts(this.products.values());
+        // this.overlayView.setProducts(this.products.values());
         this.overlayView.setCurrentGroup("");
+        updateFromGroup();
         return true;
+    }
+
+    private void updateFromGroup() {
+        String currentGroup = this.overlayView.getCurrentGroup();
+        StringBuilder productStrings = new StringBuilder();
+        for (PickingProduct product : products.values()) {
+            if(!currentGroup.isEmpty() && !currentGroup.equals(product.getGroup())) {
+                continue;
+            }
+            productStrings.append(product.getName()).append(": ").append(product.getAmount()).append("\n");
+        }
+        infoView.setText(productStrings.toString());
     }
 
     /**

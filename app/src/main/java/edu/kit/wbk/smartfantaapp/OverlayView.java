@@ -78,18 +78,8 @@ public class OverlayView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        for(QrCode code : scanResults) {
+        for (QrCode code : scanResults) {
             code.render(canvas, paint);
-        }
-        paint.setTextSize(24);
-        paint.setColor(Color.GREEN);
-        int i = 0;
-        for (PickingProduct product : products) {
-            if(!currentGroup.isEmpty() && !currentGroup.equals(product.getGroup())) {
-                continue;
-            }
-            i++;
-            canvas.drawText(product.getName() + ": " + product.getAmount(), 10, i * 32, paint);
         }
     }
 }

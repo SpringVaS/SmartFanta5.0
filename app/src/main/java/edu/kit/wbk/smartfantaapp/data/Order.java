@@ -78,7 +78,7 @@ public class Order implements Serializable {
         String otnr[][] = {{"Poltopf 3135000183","100"}};
         String[] am = {"100"};
         String stnr = "Presse 4";
-        String n [][]= {{"Poltopf lang","4"}};
+        String n [][]= {{"Poltopf (kurz)","4"}};
         return new Order(vnr, otnr, am, n,1,stnr);
     }
     public static Order getRefillOrder2() {

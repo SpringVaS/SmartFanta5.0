@@ -28,12 +28,13 @@
 
     <TextView
         android:id="@+id/scan_instructions"
-        android:text="@string/scan_instructions"
-        android:textSize="20sp"
-        android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"/>
+        android:gravity="center_horizontal"
+        android:text="@string/scan_instructions"
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/holo_green_light"
+        android:textSize="24sp" />
 
 </android.support.constraint.ConstraintLayout>
