@@ -13,25 +13,97 @@ import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 import edu.kit.wbk.smartfantaapp.MainActivity;
 
-public class Tracker
-{
+public class Tracker {
     private MainActivity activity;
+    public static boolean orderPlaced = false;
 
     public Tracker(MainActivity activity) {
         this.activity = activity;
-        new NetworkTask().execute();
+        new NetworkTask(activity).execute();
     }
 
     public static String json_crazy_stuff(String answer) {
-        int index  = answer.indexOf("x");
-        int indexz  = answer.indexOf("z");
-        String xstring = answer.substring(index +3, index +8);
-        String zstring = answer.substring(indexz +3, indexz +8);
-
+        String[] a = answer.split("\\}\\}");
+        String answera = "";
+        for (int i = 0; i < a.length; i++) {
+            if (a[i].contains("26627")) {
+                answera = a[i];
+            }
+        }
+        int index = answera.indexOf("x");
+        int indexz = answera.indexOf("z");
+        String xstring = answera.substring(index + 3, index + 8);
+        String zstring = answera.substring(indexz + 3, indexz + 8);
+        int indexy = answera.indexOf("y");
+        String ystring = answera.substring(indexy + 3, indexy + 8);
+        Log.e("test",xstring);
+        Log.e("test", zstring);
         double x = 0;
+        double y = 0;
         double z = 0;
         x = Double.valueOf(xstring);
         z = Double.valueOf(zstring);
+        y = Double.valueOf(ystring);//person
+
+        if (z <= -9 && z > -10) {
+            if (x <= 10.8 && x > 11.8) {
+                Log.e("test", "Regal 1");
+                return ("Regal 1");
+
+            } else if (x <= 11.8 && x > 13.1) {
+                Log.e("test", "Regal 2");
+                return ("Regal 2");
+            } else if (x <= 13.1 && x >= 14.0) {
+                Log.e("test", "Regal 3");
+                return ("Regal 3");
+            }
+        } else if (z <= -4.5 && x >= -6) {
+            if (x <= 10) {
+                return (" Presse 4");
+            } else {
+                return ("Presse 2");
+            }
+        } else return "somewhere";
+
+
+        return "somewhere";
+    }
+
+    public static boolean json_crazy_stuff_lager(String answer) {
+        String[] a = answer.split("\\}\\}");
+        String answerb = "";
+        for (int i = 0; i < a.length; i++) {
+            if (a[i].contains("26636")) {
+                answerb = a[i];
+            }
+        }
+        int index = answerb.indexOf("x");
+        int indexz = answerb.indexOf("z");
+        String xstring = answerb.substring(index + 3, index + 8);
+        String zstring = answerb.substring(indexz + 3, indexz + 8);
+        int indexy = answerb.indexOf("y");
+        String ystring = answerb.substring(indexy + 3, indexy + 8);
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        x = Double.valueOf(xstring);
+        z = Double.valueOf(zstring);
+        y = Double.valueOf(ystring);
+        if (z <= -5 && y > 1.1) {
+            Log.e("test", "False");
+        } else if (z > -5 && y <= 1.1) {
+            Log.e("test", "True");
+            return true;
+        }
+        //Lager
+
+        return false;
+    }
+
+
+    // }
+
+
         /*try { x = Double.valueOf(xs);
         z = Double.valueOf(zs);
             JSONArray arr = answer.getJSONArray("position");
@@ -43,42 +115,28 @@ public class Tracker
             System.out.println(j.toString());
         }
 */
-        if (z <= -9 && z > -10) {
-            if (x <= 10.8 && x > 11.8) {
-                return ("Regal 1");
-            } else if (x <= 11.8 && x > 13.1) {
-                return ("Regal 2");
-            } else if (x <= 13.1 && x >= 14.0) {
-                return ("Regal 3");
-            }
-        } else if (z <= -5 && x >= -6) {
-            if (x <= 10) {
-                return (" Presse 4");
-            } else {
-                return ("Presse 2");
-            }
-        } else return "somewhere";
-        Log.e("test",xstring);
-        Log.e("test", zstring);
-        return "somewhere";
-    }
-
 
     private class NetworkTask extends AsyncTask<Void, Void, String> {
+
+        MainActivity activity;
+
+        public NetworkTask(MainActivity pActivity) {
+            this.activity = pActivity;
+        }
+
         @Override
         protected String doInBackground(Void... voids) {
 
             StringBuilder builder = new StringBuilder();
             try (CloseableHttpClient client = HttpClients.createDefault()) {
-                HttpGet request = new HttpGet("http://192.168.43.26:8090/kinexon/data/current/all/");
-                Log.e("tracker", "Dooo");
+                HttpGet request = new HttpGet("http://192.168.43.26:8090/kinexon/data/current/all/position");
                 HttpResponse response = client.execute(request);
                 BufferedReader bufReader = new BufferedReader(new InputStreamReader(
                         response.getEntity().getContent()));
 
                 String line;
 
-                 while ((line = bufReader.readLine()) != null) {
+                while ((line = bufReader.readLine()) != null) {
                     builder.append(line);
                     builder.append(System.lineSeparator());
                 }
@@ -87,14 +145,30 @@ public class Tracker
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            String s = json_crazy_stuff(builder.toString());
-            return s;
+            try {
+                String s = json_crazy_stuff(builder.toString());
+                if (json_crazy_stuff_lager(builder.toString())) {
+                    if (!(Tracker.orderPlaced)) {
+                        Tracker.orderPlaced = true;
+                        Log.e("Tracker", "placed Order once");
+                        return "place order";
+
+                    }
+                } else {
+                    Tracker.orderPlaced = false;
+                }
+                return s;
+            } catch (StringIndexOutOfBoundsException e) {
+            } catch (ArrayIndexOutOfBoundsException a) {
+            }
+
+            return "Somewhere";
         }
 
         @Override
         protected void onPostExecute(String s) {
             activity.receivedTrackerInfo(s);
-            Log.e("net",s);
+            // Log.e("net",s);
         }
     }
 }

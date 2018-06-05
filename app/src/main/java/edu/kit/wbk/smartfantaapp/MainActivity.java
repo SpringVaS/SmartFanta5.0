@@ -185,7 +185,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         }
     }
 
-    private boolean receivedOrder () {
+    public boolean receivedOrder () {
         currentOrder = Order.getOrderOne();
         this.products = currentOrder.getProductsToPick();
         this.overlayView.setProducts(this.products.values());
@@ -225,6 +225,11 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
     public void receivedTrackerInfo(String info) {
         // TODO do stuff with info
+
+        if (info.equals("place Order")) {
+            receivedOrder();
+        }
+
         if(this.shouldTrack) {
             new Tracker(this);
         }
