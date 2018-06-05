@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.vuzix.sdk.barcode.ScanResult;
@@ -28,6 +29,14 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
     private Order currentOrder;
     private HashMap<String, PickingProduct> products = new HashMap<>();
+    private HashMap<String, String> groups;
+    {
+        groups = new HashMap<>();
+        groups.put("Regal 1", "1");
+        groups.put("Regal 2", "4");
+        groups.put("Regal 3", "3");
+        groups.put("Regal 4", "4");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +46,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         // look straight down to scan a barcode. Allow left and right eye operation, but lock it
         // in once started
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Since the Vuzix M300 API is level 23, always use runtime permissions
         PermissionsFragment permissionsFragment = (PermissionsFragment)getFragmentManager().findFragmentByTag(TAG_PERMISSIONS_FRAGMENT);
@@ -90,6 +100,14 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
             code.scalePoints(scale);
             PickingProduct product = products.get(code.getCode());
             code.setRequestedAmount(product == null ? "0" : product.getAmount());
+            String group = groups.get(code.getCode().trim());
+            if(group != null) {
+                code.setRequestedAmount(code.getCode());
+                if(group.equals("4")) {
+                    code.setRequestedAmount("Regal 4");
+                }
+                this.overlayView.setCurrentGroup(group);
+            }
             codes[i] = code;
         }
         return codes;
@@ -141,6 +159,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private boolean receivedOrder () {
         currentOrder = Order.getOrderOne();
         this.products = currentOrder.getProductsToPick();
+        this.overlayView.setCurrentGroup("");
         return true;
     }
 
