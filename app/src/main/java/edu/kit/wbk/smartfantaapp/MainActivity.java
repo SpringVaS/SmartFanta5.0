@@ -62,6 +62,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         infoView.setVisibility(View.GONE);
 
         overlayView = (OverlayView) findViewById(R.id.overlayView);
+        this.overlayView.setZ(100);
         currentOrder = null;
 
         createScannerListener();
@@ -88,8 +89,6 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private void onScanFragmentScanResult(Bitmap bitmap, ScanResult[] results) {
         this.scanResults = processResults(results);
         this.overlayView.setScanResults(this.scanResults);
-        this.overlayView.setProducts(this.products.values());
-        this.overlayView.setZ(100);
     }
 
     private QrCode[] processResults(ScanResult[] results) {
@@ -159,6 +158,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private boolean receivedOrder () {
         currentOrder = Order.getOrderOne();
         this.products = currentOrder.getProductsToPick();
+        this.overlayView.setProducts(this.products.values());
         this.overlayView.setCurrentGroup("");
         return true;
     }

@@ -88,8 +88,8 @@ public class OverlayView extends View {
             if(!currentGroup.isEmpty() && !currentGroup.equals(product.getGroup())) {
                 continue;
             }
-            canvas.drawText(product.getName() + ": " + product.getAmount(), 10, i * 32, paint);
             i++;
+            canvas.drawText(product.getName() + ": " + product.getAmount(), 10, i * 32, paint);
         }
     }
 }
