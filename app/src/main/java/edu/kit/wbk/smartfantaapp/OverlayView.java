@@ -71,10 +71,11 @@ public class OverlayView extends View {
         for(QrCode code : scanResults) {
             code.render(canvas, paint);
         }
-        paint.setTextSize(32);
+        paint.setTextSize(24);
+        paint.setColor(Color.GREEN);
         int i = 0;
         for (PickingProduct product : products) {
-            canvas.drawText(product.getName() + ": " + product.getAmount(), 10, i * 40, paint);
+            canvas.drawText(product.getName() + ": " + product.getAmount(), 10, i * 32, paint);
             i++;
         }
     }

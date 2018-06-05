@@ -8,6 +8,8 @@ import android.graphics.PointF;
 import com.vuzix.sdk.barcode.Location;
 
 public class QrCode {
+    private boolean debugRendering = true;
+
     private final String code;
     private PointF point1;
     private PointF point2;
@@ -57,6 +59,7 @@ public class QrCode {
         point4.y *= scale;
         topLeft.x *= scale;
         topLeft.y *= scale;
+        bottom *= scale;
     }
 
     private static void drawLine(Canvas canvas, Paint paint, PointF location1, PointF location2) {
@@ -72,11 +75,14 @@ public class QrCode {
 
     public void render(Canvas canvas, Paint paint) {
         paint.setColor(this.requestedAmount.equals("0") ? Color.RED : Color.GREEN);
-        renderSquare(canvas, paint);
-        paint.setTextSize(32);
+        if(debugRendering) {
+            renderSquare(canvas, paint);
+            paint.setTextSize(32);
+            canvas.drawText(this.code, topLeft.x, topLeft.y - 15, paint);
+        }
         paint.setFakeBoldText(true);
-        canvas.drawText(this.code, topLeft.x, topLeft.y - 15, paint);
-        paint.setTextSize(64);
+        paint.setTextSize(128);
         canvas.drawText(this.requestedAmount, topLeft.x, bottom, paint);
+        paint.setFakeBoldText(false);
     }
 }
