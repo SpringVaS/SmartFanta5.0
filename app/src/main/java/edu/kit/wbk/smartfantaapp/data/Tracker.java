@@ -59,12 +59,8 @@ public class Tracker {
 
             StringBuilder builder = new StringBuilder();
             try (CloseableHttpClient client = HttpClients.createDefault()) {
-                //HttpGet request = new HttpGet("http://www.google.com");
-                //HttpGet request = new HttpGet("http://129.13.234.135:8090/kinexon/data/current/all/");
-                 HttpGet request = new HttpGet("http://129.13.10.241:8090/kinexon/data/current/all/");
-                Log.e("tracker", "DOOOO");
+                HttpGet request = new HttpGet("http://129.13.10.241:8090/kinexon/data/current/all/");
                 HttpResponse response = client.execute(request);
-                Log.e("tracker", "DOOOO");
                 BufferedReader bufReader = new BufferedReader(new InputStreamReader(
                         response.getEntity().getContent()));
 

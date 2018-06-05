@@ -22,6 +22,7 @@ import java.util.TimerTask;
 import edu.kit.wbk.smartfantaapp.data.Order;
 import edu.kit.wbk.smartfantaapp.data.PickingProduct;
 import edu.kit.wbk.smartfantaapp.data.QrCode;
+import edu.kit.wbk.smartfantaapp.data.Tracker;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
@@ -204,6 +205,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         scannerFragment.setArguments(args);
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, scannerFragment).commit();
         scannerFragment.setListener(mScannerListener);     // Required to get scan results
+        new Tracker();
+
     }
 
     @Override
