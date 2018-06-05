@@ -53,7 +53,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
         createScannerListener();
 
-        Tracker.main();
+        // Tracker.main();
     }
 
     /**
@@ -154,7 +154,6 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-
         if (keyCode == KeyEvent.KEYCODE_ENTER && currentOrder != null) {
             Intent intent = new Intent(this, RouteActivity.class);
             intent.putExtra(Order.ORDER, currentOrder);
@@ -166,5 +165,4 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
         return super.onKeyUp(keyCode, event);
     }
-
 }

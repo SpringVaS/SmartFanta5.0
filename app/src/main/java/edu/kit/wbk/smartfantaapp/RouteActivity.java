@@ -1,5 +1,6 @@
 package edu.kit.wbk.smartfantaapp;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -8,7 +9,7 @@ import edu.kit.wbk.smartfantaapp.data.Order;
 import android.content.Intent;
 
 
-public class RouteActivity extends AppCompatActivity {
+public class RouteActivity extends Activity {
 
     TextView text;
     Order order;
