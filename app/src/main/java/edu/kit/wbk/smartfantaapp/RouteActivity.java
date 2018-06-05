@@ -50,10 +50,10 @@ public class RouteActivity extends Activity {
        // OrderItem currentItem;
         if (itemIterator.hasNext()) {
             OrderItem currentItem = (OrderItem) itemIterator.next();
-            text.setText("Go to " + currentItem.getDestination() +
+            /*text.setText("Go to " + currentItem.getDestination() +
                     "\nto delviver " + String.valueOf(currentItem.getAmount()
-                    + " " + currentItem.getName()));
-            return  true;
+                    + " " + currentItem.getName()));*/
+            return true;
 
         } else if (nextOrderAvailable()) {
             text.setText("Go to " + "storage" + " to pick up new order");
@@ -61,7 +61,7 @@ public class RouteActivity extends Activity {
             text.setText("No incoming order.");
         }
 
-        return true;
+        return false;
 
     }
 
@@ -74,8 +74,7 @@ public class RouteActivity extends Activity {
 
             text.setText("Get order to " + order.getStation());
 
-            MainActivity parent = (MainActivity) this.getParent();
-            if (nextOrderAvailable()) {
+            if (!getNextStation()) {
                 Order.orderQueue.remove(order);
                 finish();
             }
