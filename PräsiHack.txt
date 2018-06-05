@@ -1,14 +1,15 @@
 Wer braucht es?
-Kommisionierer
+Firmen mit groÃŸen Lagern, komplizierten KommisioniervorgÃ¤ngen, die ihre Logistik optimieren wollen
 Warum?
-fehleranfälliges Picking nach Liste
-Prognosen und Wegführung machen Arbeit effizienter schneller, weniger anstrengend
+fehleranfï¿½lliges Picking nach Liste
+Prognosen und Wegfï¿½hrung machen Arbeit effizienter schneller, weniger anstrengend
 Warum hilft es?
 Zeigt deutlicher was korrektes Item ist
-Automatische Aufträge
+Automatische Auftrï¿½ge
 Wegplanung macht effzienter
 Wie verkauft man es?
-Gesundheit der Arbeiter wird erhöht.
+Weniger Fehler
+Gesundheit der Arbeiter wird erhï¿½ht.
 
 Demo Ablauf:
 Vorkommissionieren eines Kundenauftrags
