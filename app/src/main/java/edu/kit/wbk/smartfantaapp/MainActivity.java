@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.vuzix.sdk.barcode.ScanResult;
@@ -14,21 +16,33 @@ import com.vuzix.sdk.barcode.ScannerFragment;
 import com.vuzix.sdk.barcode.ScanningRect;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import edu.kit.wbk.smartfantaapp.data.Order;
 import edu.kit.wbk.smartfantaapp.data.PickingProduct;
 import edu.kit.wbk.smartfantaapp.data.QrCode;
-import edu.kit.wbk.smartfantaapp.data.Tracker;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
+
     private View infoView;
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
-    private QrCode[] scanResults;
+    private QrCode[] scanResults = {};
 
     private Order currentOrder;
     private HashMap<String, PickingProduct> products = new HashMap<>();
+    private HashMap<String, String> groups;
+    {
+        groups = new HashMap<>();
+        groups.put("Regal 1", "1");
+        groups.put("Regal 2", "4");
+        groups.put("Regal 3", "3");
+        groups.put("Regal 4", "4");
+    }
+
+    long lastScannedResult = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +52,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         // look straight down to scan a barcode. Allow left and right eye operation, but lock it
         // in once started
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Since the Vuzix M300 API is level 23, always use runtime permissions
         PermissionsFragment permissionsFragment = (PermissionsFragment)getFragmentManager().findFragmentByTag(TAG_PERMISSIONS_FRAGMENT);
@@ -53,10 +68,29 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         infoView.setVisibility(View.GONE);
 
         overlayView = (OverlayView) findViewById(R.id.overlayView);
+        this.overlayView.setZ(100);
         currentOrder = null;
 
         createScannerListener();
 
+
+        final Handler handler = new Handler();
+        Timer timer = new Timer(false);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(System.currentTimeMillis() - lastScannedResult > 1500 && scanResults.length != 0) {
+                            clearScanResult();
+                        }
+                    }
+                });
+            }
+        };
+
+        timer.scheduleAtFixedRate(timerTask, 200, 200);
     }
 
     /**
@@ -65,6 +99,10 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     @Override
     public void permissionsGranted() {
         showScanner();
+    }
+
+    private void clearScanResult() {
+        this.onScanFragmentScanResult(null, new ScanResult[0]);
     }
 
     /**
@@ -76,10 +114,9 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
      * @param results -  an array of ScanResult
      */
     private void onScanFragmentScanResult(Bitmap bitmap, ScanResult[] results) {
+        this.lastScannedResult = System.currentTimeMillis();
         this.scanResults = processResults(results);
         this.overlayView.setScanResults(this.scanResults);
-        this.overlayView.setProducts(this.products.values());
-        this.overlayView.setZ(100);
     }
 
     private QrCode[] processResults(ScanResult[] results) {
@@ -90,6 +127,14 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
             code.scalePoints(scale);
             PickingProduct product = products.get(code.getCode());
             code.setRequestedAmount(product == null ? "0" : product.getAmount());
+            String group = groups.get(code.getCode().trim());
+            if(group != null) {
+                code.setRequestedAmount(code.getCode());
+                if(group.equals("4")) {
+                    code.setRequestedAmount("Regal 4");
+                }
+                this.overlayView.setCurrentGroup(group);
+            }
             codes[i] = code;
         }
         return codes;
@@ -141,6 +186,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private boolean receivedOrder () {
         currentOrder = Order.getOrderOne();
         this.products = currentOrder.getProductsToPick();
+        this.overlayView.setProducts(this.products.values());
+        this.overlayView.setCurrentGroup("");
         return true;
     }
 
@@ -157,7 +204,6 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         scannerFragment.setArguments(args);
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, scannerFragment).commit();
         scannerFragment.setListener(mScannerListener);     // Required to get scan results
-        new Tracker();
     }
 
     @Override

@@ -51,7 +51,7 @@ public class PermissionsFragment extends Fragment {
 
     private Listener listener;
 
-    private String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE};
+    private String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.WAKE_LOCK};
     private int permissionIndex = 0;
 
     /**

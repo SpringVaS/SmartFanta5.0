@@ -18,6 +18,7 @@ import edu.kit.wbk.smartfantaapp.data.QrCode;
 public class OverlayView extends View {
     private QrCode[] scanResults;
     private Collection<PickingProduct> products;
+    private String currentGroup = "";
 
     Paint paint;
     public OverlayView(Context context) {
@@ -60,6 +61,15 @@ public class OverlayView extends View {
         return products;
     }
 
+    public String getCurrentGroup() {
+        return currentGroup;
+    }
+
+    public void setCurrentGroup(String currentGroup) {
+        this.currentGroup = currentGroup;
+        this.invalidate();
+    }
+
     public void setProducts(Collection<PickingProduct> products) {
         this.products = products;
         this.invalidate();
@@ -75,8 +85,11 @@ public class OverlayView extends View {
         paint.setColor(Color.GREEN);
         int i = 0;
         for (PickingProduct product : products) {
-            canvas.drawText(product.getName() + ": " + product.getAmount(), 10, i * 32, paint);
+            if(!currentGroup.isEmpty() && !currentGroup.equals(product.getGroup())) {
+                continue;
+            }
             i++;
+            canvas.drawText(product.getName() + ": " + product.getAmount(), 10, i * 32, paint);
         }
     }
 }

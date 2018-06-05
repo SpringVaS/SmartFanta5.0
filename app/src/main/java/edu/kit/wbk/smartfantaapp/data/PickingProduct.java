@@ -6,7 +6,7 @@ public class PickingProduct {
     private String name;
     private String amount;
 
-    public PickingProduct(String code, String group, String name, String amount) {
+    public PickingProduct(String code, String amount, String name, String group) {
         this.code = code;
         this.group = group;
         this.name = name;

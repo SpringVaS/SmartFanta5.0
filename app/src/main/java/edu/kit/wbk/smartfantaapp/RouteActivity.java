@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.widget.TextView;
 import edu.kit.wbk.smartfantaapp.data.Order;
 import android.content.Intent;
@@ -18,6 +19,7 @@ public class RouteActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         text = (TextView) findViewById(R.id.textView);
         text.setText("Go to Press 4");

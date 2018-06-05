@@ -8,7 +8,7 @@ import android.graphics.PointF;
 import com.vuzix.sdk.barcode.Location;
 
 public class QrCode {
-    private boolean debugRendering = true;
+    private boolean debugRendering = false;
 
     private final String code;
     private PointF point1;
@@ -16,7 +16,7 @@ public class QrCode {
     private PointF point3;
     private PointF point4;
     private PointF topLeft;
-    float bottom;
+    private float bottom;
 
     private String requestedAmount = "";
 
