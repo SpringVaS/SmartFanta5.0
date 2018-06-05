@@ -1,17 +1,24 @@
 package edu.kit.wbk.smartfantaapp.data;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import cz.msebera.android.httpclient.HttpRequest;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 
 public class Tracker {
+
+    public Tracker() {
+        new NetworkTask().execute();
+    }
+
     public static String json_crazy_stuff(String answer) {
 
         double x = 0;
@@ -40,30 +47,46 @@ public class Tracker {
             } else {
                 return ("Presse 2");
             }
-        } else return null;
+        } else return "somewhere";
 
-    return null;
+        return "somewhere";
     }
-    public static void main() {
-        StringBuilder builder = new StringBuilder();
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet request = new HttpGet("http://129.13.10.241:8090/kinexon/data/current/all/");
-            HttpResponse response = client.execute(request);
 
-            BufferedReader bufReader = new BufferedReader(new InputStreamReader(
-                    response.getEntity().getContent()));
 
-            String line;
+    private static class NetworkTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
 
-            while ((line = bufReader.readLine()) != null) {
-                builder.append(line);
-                builder.append(System.lineSeparator());
+            StringBuilder builder = new StringBuilder();
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                //HttpGet request = new HttpGet("http://www.google.com");
+                //HttpGet request = new HttpGet("http://129.13.234.135:8090/kinexon/data/current/all/");
+                 HttpGet request = new HttpGet("http://129.13.10.241:8090/kinexon/data/current/all/");
+                Log.e("tracker", "DOOOO");
+                HttpResponse response = client.execute(request);
+                Log.e("tracker", "DOOOO");
+                BufferedReader bufReader = new BufferedReader(new InputStreamReader(
+                        response.getEntity().getContent()));
+
+                String line;
+
+                 while ((line = bufReader.readLine()) != null) {
+                    builder.append(line);
+                    builder.append(System.lineSeparator());
+                }
+
+                Log.e("Tracker", builder.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            Log.d("Tracker", builder.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
+            String s = json_crazy_stuff(builder.toString());
+            return s;
         }
-        json_crazy_stuff(builder.toString());
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.e("net",s);
+        }
     }
 }
+
