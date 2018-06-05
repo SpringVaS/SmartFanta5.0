@@ -13,9 +13,11 @@ import com.vuzix.sdk.barcode.ScanResult;
 import com.vuzix.sdk.barcode.ScannerFragment;
 import com.vuzix.sdk.barcode.ScanningRect;
 
+import java.util.HashMap;
+
 import edu.kit.wbk.smartfantaapp.data.Order;
+import edu.kit.wbk.smartfantaapp.data.PickingProduct;
 import edu.kit.wbk.smartfantaapp.data.QrCode;
-import edu.kit.wbk.smartfantaapp.data.Tracker;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
@@ -25,6 +27,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private QrCode[] scanResults;
 
     private Order currentOrder;
+    private HashMap<String, PickingProduct> products = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private void onScanFragmentScanResult(Bitmap bitmap, ScanResult[] results) {
         this.scanResults = processResults(results);
         this.overlayView.setScanResults(this.scanResults);
+        this.overlayView.setProducts(this.products.values());
         this.overlayView.setZ(100);
     }
 
@@ -82,8 +86,11 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         final float scale = 1.f / 3;
         QrCode[] codes = new QrCode[results.length];
         for(int i = 0; i < codes.length; i++) {
-            codes[i] = new QrCode(results[i].getLocation(), results[i].getText());
-            codes[i].scalePoints(scale);
+            QrCode code = new QrCode(results[i].getLocation(), results[i].getText());
+            code.scalePoints(scale);
+            PickingProduct product = products.get(code.getCode());
+            code.setRequestedAmount(product == null ? "0" : product.getAmount());
+            codes[i] = code;
         }
         return codes;
     }
@@ -133,8 +140,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
     private boolean receivedOrder () {
         currentOrder = Order.getOrderOne();
+        this.products = currentOrder.getProductsToPick();
         return true;
-
     }
 
     /**
