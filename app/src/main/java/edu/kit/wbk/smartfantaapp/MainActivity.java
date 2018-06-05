@@ -51,6 +51,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         groups.put("Regal 4", "4");
     }
 
+    public static Activity subActivity;
+
     private long lastScannedResult = 0;
     private boolean shouldTrack = true;
 
@@ -261,15 +263,20 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
                 Log.i("Main", "Back and done");
             //}
         }
+
+        subActivity = null;
     }
 
     public void receivedTrackerInfo(String info) {
         // TODO do stuff with info
 
-        if (info.equals("place order")) {
+        if (info.equals(Tracker.PLACE_ORDER)) {
             receivedOrder(Order.getRefillOrder());
         } else if (info.equals(Tracker.SHELF)) {
-
+            if(subActivity != null) {
+                subActivity.setResult(RESULT_OK);
+                subActivity.finish();
+            }
         }
 
         if(this.shouldTrack) {

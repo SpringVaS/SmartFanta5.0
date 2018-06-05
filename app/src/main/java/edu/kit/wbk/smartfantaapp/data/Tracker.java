@@ -16,6 +16,7 @@ import edu.kit.wbk.smartfantaapp.MainActivity;
 public class Tracker {
     private MainActivity activity;
     public static boolean orderPlaced = false;
+    public static String PLACE_ORDER = "place order";
     public static String SHELF = "shelf";
 
     public Tracker(MainActivity activity) {
@@ -160,15 +161,15 @@ public class Tracker {
                     if (!(Tracker.orderPlaced)) {
                         Tracker.orderPlaced = true;
                         Log.e("Tracker", "placed Order once");
-                        return "place order";
+                        return PLACE_ORDER;
 
                     }
                 } else {
                     Tracker.orderPlaced = false;
                 }
                 return s;
-            } catch (StringIndexOutOfBoundsException e) {
-            } catch (ArrayIndexOutOfBoundsException a) {
+            } catch (StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
 
             return "Somewhere";

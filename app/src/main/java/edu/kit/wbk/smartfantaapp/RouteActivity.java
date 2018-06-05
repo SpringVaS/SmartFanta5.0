@@ -32,9 +32,8 @@ public class RouteActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
+        MainActivity.subActivity = this;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-
 
         text = (TextView) findViewById(R.id.textView);
         text.setText("Everything picked?");
@@ -45,7 +44,6 @@ public class RouteActivity extends Activity {
         List<OrderItem> items = order.getPickedProductsDestination();
         itemIterator = items.iterator();
         inDelivery = false;
-
     }
 
     private boolean getNextStation () {
