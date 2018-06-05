@@ -16,6 +16,8 @@ import com.vuzix.sdk.barcode.ScannerFragment;
 import com.vuzix.sdk.barcode.ScanningRect;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,12 +28,14 @@ import edu.kit.wbk.smartfantaapp.data.Tracker;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
+    protected static final String PICKED_PRODUCTS = "picked products";
 
     private View infoView;
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
     private QrCode[] scanResults = {};
 
+   // private List<Order> orderQueue = new LinkedList<>();
     private Order currentOrder;
     private HashMap<String, PickingProduct> products = new HashMap<>();
     private HashMap<String, String> groups;
@@ -185,8 +189,19 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         }
     }
 
-    public boolean receivedOrder () {
-        currentOrder = Order.getOrderOne();
+    private boolean receivedOrder () {
+        return Order.orderQueue.add(Order.getOrderOne());
+    }
+
+    /*public List<Order> getOrderQueue() {
+        return orderQueue;
+    }*/
+
+    private boolean takeOrder() {
+        if (Order.orderQueue.isEmpty()) {
+            return false;
+        }
+        currentOrder = Order.orderQueue.get(0);
         this.products = currentOrder.getProductsToPick();
         this.overlayView.setProducts(this.products.values());
         this.overlayView.setCurrentGroup("");
@@ -206,17 +221,23 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         scannerFragment.setArguments(args);
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, scannerFragment).commit();
         scannerFragment.setListener(mScannerListener);     // Required to get scan results
-        new Tracker(this);
+        //new Tracker(this);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_ENTER && currentOrder != null) {
-            Intent intent = new Intent(this, RouteActivity.class);
-            intent.putExtra(Order.ORDER, currentOrder);
-            startActivity(intent);
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            if (currentOrder == null) {
+                if (takeOrder()) {
+
+                };
+            } else {
+                Intent intent = new Intent(this, RouteActivity.class);
+                intent.putExtra(Order.ORDER, currentOrder);
+                startActivity(intent);
+            }
             return true;
-        } else if (keyCode == 22){
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
             receivedOrder();
         }
 
@@ -230,8 +251,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
             receivedOrder();
         }
 
-        if(this.shouldTrack) {
+        /*if(this.shouldTrack) {
             new Tracker(this);
-        }
+        }*/
     }
 }

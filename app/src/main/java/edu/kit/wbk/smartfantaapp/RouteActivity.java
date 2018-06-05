@@ -1,19 +1,31 @@
 package edu.kit.wbk.smartfantaapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.TextView;
 import edu.kit.wbk.smartfantaapp.data.Order;
+import edu.kit.wbk.smartfantaapp.data.OrderItem;
+import edu.kit.wbk.smartfantaapp.data.PickingProduct;
+
 import android.content.Intent;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 public class RouteActivity extends Activity {
 
     TextView text;
     Order order;
+    Iterator itemIterator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,12 +33,35 @@ public class RouteActivity extends Activity {
         setContentView(R.layout.activity_route);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+
+
         text = (TextView) findViewById(R.id.textView);
-        text.setText("Go to Press 4");
+        text.setText("Everything picked?");
         text.setTextSize(50.f);
 
         Intent intent = getIntent();
         order = (Order) intent.getSerializableExtra(Order.ORDER);
+        List<OrderItem> items = order.getPickedProductsDestination();
+        itemIterator = items.iterator();
+
+    }
+
+    private boolean getNextStation () {
+       // OrderItem currentItem;
+        if (itemIterator.hasNext()) {
+            OrderItem currentItem = (OrderItem) itemIterator.next();
+            /*text.setText("Go to " + currentItem.getDestination() +
+                    "\nto delviver " + String.valueOf(currentItem.getAmount()
+                    + " " + currentItem.getName()));*/
+            return true;
+
+        } else if (nextOrderAvailable()) {
+            text.setText("Go to " + "storage" + " to pick up new order");
+        } else {
+            text.setText("No incoming order.");
+        }
+
+        return false;
 
     }
 
@@ -34,8 +69,17 @@ public class RouteActivity extends Activity {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
+
            // text.setText(String.valueOf(keyCode));
-            finish();
+
+            text.setText("Get order to " + order.getStation());
+
+            if (!getNextStation()) {
+                Order.orderQueue.remove(order);
+                finish();
+            }
+//            parent.getOrderQueue().remove(order);
+
             return true;
         }
 
@@ -44,6 +88,11 @@ public class RouteActivity extends Activity {
 
     public boolean deliveredToStation(String stationName) {
         return true;
+    }
+
+    private boolean nextOrderAvailable() {
+       // MainActivity parent = (MainActivity) getParentActivityIntent();
+        return Order.orderQueue.get(1) != null;
     }
 
 }

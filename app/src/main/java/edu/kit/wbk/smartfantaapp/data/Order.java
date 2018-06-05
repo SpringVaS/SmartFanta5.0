@@ -1,10 +1,18 @@
 package edu.kit.wbk.smartfantaapp.data;
 
+import android.util.Log;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Order implements Serializable {
     public static final String ORDER = "order";
+    public static List<Order> orderQueue = new LinkedList<>();
+
+
 
     public String variation;
     public String [][] objects;
@@ -28,6 +36,28 @@ public class Order implements Serializable {
             map.put(objects[i][0], new PickingProduct(objects[i][0], objects[i][1], names[i][0], names[i][1]));
         }
         return map;
+    }
+
+    public List<OrderItem> getPickedProductsDestination() {
+        List<OrderItem> items = new ArrayList<>();
+        for(int i = 0; i < objects.length; i++) {
+            for (int j = 0; j < names.length; j++) {
+                if (objects[i][0].startsWith(names[j][0])) {
+                    int amount = 0;
+                    try {
+                        amount = Integer.valueOf(objects[i][1]);
+                    } catch (NumberFormatException e) {
+                        Log.e(ORDER, "invalid order, amount does not specify an integer value");
+                    }
+                    items.add(new OrderItem(names[i][0], amount, station));
+                }
+            }
+        }
+        return items;
+    }
+
+    public String getStation() {
+        return station;
     }
 
     public static Order getOrderOne() {

@@ -60,7 +60,7 @@ public class Tracker {
                 Log.e("test", "Regal 3");
                 return ("Regal 3");
             }*/
-        } else if (z <= -3.5 && z >= -6) {
+        } else if (z <= -4.5 && z >= -6) {
             if (x <= 10) {
                 Log.e("test","Presse4");
 
