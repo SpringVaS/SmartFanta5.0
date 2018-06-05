@@ -3,6 +3,8 @@ package edu.kit.wbk.smartfantaapp.data;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,10 +22,17 @@ public class Tracker {
     }
 
     public static String json_crazy_stuff(String answer) {
+        int index  = answer.indexOf("x");
+        int indexz  = answer.indexOf("z");
+        String xstring = answer.substring(index +2, index +8);
+        String zstring = answer.substring(indexz +2, indexz +8);
 
         double x = 0;
         double z = 0;
-        /*try {
+        x = Double.valueOf(xstring);
+        z = Double.valueOf(zstring);
+        /*try { x = Double.valueOf(xs);
+        z = Double.valueOf(zs);
             JSONArray arr = answer.getJSONArray("position");
             String xs = arr.getJSONObject(0).getString("x");
             String zs = arr.getJSONObject(2).getString("z");
@@ -59,7 +68,7 @@ public class Tracker {
 
             StringBuilder builder = new StringBuilder();
             try (CloseableHttpClient client = HttpClients.createDefault()) {
-                HttpGet request = new HttpGet("http://129.13.10.241:8090/kinexon/data/current/all/");
+                HttpGet request = new HttpGet("http://192.168.43.26:8090/kinexon/data/current/all/");
                 HttpResponse response = client.execute(request);
                 BufferedReader bufReader = new BufferedReader(new InputStreamReader(
                         response.getEntity().getContent()));
