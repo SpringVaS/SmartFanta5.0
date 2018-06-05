@@ -37,6 +37,7 @@ public class Tracker {
         int indexy = answera.indexOf("y");
         String ystring = answera.substring(indexy + 3, indexy + 8);
         Log.e("test",xstring);
+        //asldkjf
         Log.e("test", zstring);
         double x = 0;
         double y = 0;
