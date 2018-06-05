@@ -35,6 +35,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
     public  List<Order> orderQueue = new LinkedList<>();
     private TextView infoView;
+    private TextView newOrderView;
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
     private QrCode[] scanResults = {};
@@ -56,6 +57,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     public static Activity subActivity;
 
     private long lastScannedResult = 0;
+    private long lastOrderArrived = 0;
+    private boolean newOrderArrived = false;
     private boolean shouldTrack = true;
 
     @Override
@@ -79,6 +82,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
         // Hide the instructions until we have permission granted
         infoView = (TextView) findViewById(R.id.scan_instructions);
+        newOrderView = (TextView) findViewById(R.id.order_instruction);
 
         overlayView = (OverlayView) findViewById(R.id.overlayView);
         this.overlayView.setZ(100);
@@ -96,8 +100,13 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if(System.currentTimeMillis() - lastScannedResult > 1500 && scanResults.length != 0) {
+                        long currentMillis = System.currentTimeMillis();
+                        if(currentMillis - lastScannedResult > 1500 && scanResults.length != 0) {
                             clearScanResult();
+                        }
+                        if(currentMillis - lastOrderArrived > 1000 && newOrderArrived) {
+                            newOrderView.setText("");
+                            newOrderArrived = false;
                         }
                     }
                 });
@@ -199,6 +208,9 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     }
 
     private boolean receivedOrder (Order ord) {
+        newOrderView.setText("New Ordder arrived!");
+        newOrderArrived = true;
+        lastOrderArrived = System.currentTimeMillis();
         return orderQueue.add(ord);
     }
 
