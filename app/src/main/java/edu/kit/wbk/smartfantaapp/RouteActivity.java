@@ -25,6 +25,7 @@ public class RouteActivity extends Activity {
     TextView text;
     Order order;
     Iterator itemIterator;
+    boolean inDelivery;
 
 
     @Override
@@ -43,6 +44,7 @@ public class RouteActivity extends Activity {
         order = (Order) intent.getSerializableExtra(Order.ORDER);
         List<OrderItem> items = order.getPickedProductsDestination();
         itemIterator = items.iterator();
+        inDelivery = false;
 
     }
 
@@ -74,11 +76,11 @@ public class RouteActivity extends Activity {
 
             text.setText("Get order to " + order.getStation());
 
-            if (!getNextStation()) {
-                Order.orderQueue.remove(order);
+            if (inDelivery) {
                 finish();
+            } else {
+                inDelivery = true;
             }
-//            parent.getOrderQueue().remove(order);
 
             return true;
         }
@@ -91,8 +93,9 @@ public class RouteActivity extends Activity {
     }
 
     private boolean nextOrderAvailable() {
-       // MainActivity parent = (MainActivity) getParentActivityIntent();
-        return Order.orderQueue.get(1) != null;
+
+
+        return false;
     }
 
 }

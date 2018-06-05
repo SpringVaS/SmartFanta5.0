@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -28,8 +29,10 @@ import edu.kit.wbk.smartfantaapp.data.Tracker;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
+    public static final int REQUEST_CODE = 1;
     protected static final String PICKED_PRODUCTS = "picked products";
 
+    public  List<Order> orderQueue = new LinkedList<>();
     private View infoView;
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
@@ -129,7 +132,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         final float scale = 1.f / 3;
         QrCode[] codes = new QrCode[results.length];
         for(int i = 0; i < codes.length; i++) {
-            QrCode code = new QrCode(results[i].getLocation(), results[i].getText());
+            QrCode code = new QrCode(results[i].getLocation(), results[i].getText().trim());
             code.scalePoints(scale);
             PickingProduct product = products.get(code.getCode());
             code.setRequestedAmount(product == null ? "0" : product.getAmount());
@@ -190,7 +193,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     }
 
     private boolean receivedOrder () {
-        return Order.orderQueue.add(Order.getOrderOne());
+        return orderQueue.add(Order.getOrderOne());
     }
 
     /*public List<Order> getOrderQueue() {
@@ -198,10 +201,10 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     }*/
 
     private boolean takeOrder() {
-        if (Order.orderQueue.isEmpty()) {
+        if (orderQueue.isEmpty()) {
             return false;
         }
-        currentOrder = Order.orderQueue.get(0);
+        currentOrder = orderQueue.get(0);
         this.products = currentOrder.getProductsToPick();
         this.overlayView.setProducts(this.products.values());
         this.overlayView.setCurrentGroup("");
@@ -228,13 +231,12 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
             if (currentOrder == null) {
-                if (takeOrder()) {
-
-                };
+                takeOrder();
             } else {
                 Intent intent = new Intent(this, RouteActivity.class);
                 intent.putExtra(Order.ORDER, currentOrder);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE);
+
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
@@ -242,6 +244,23 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         }
 
         return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUEST_CODE) {
+            // Make sure the request was successful
+            //if (resultCode == RESULT_OK) {
+                orderQueue.remove(currentOrder);
+                this.products.clear();
+                overlayView.setProducts(this.products.values());
+                if (orderQueue.size() > 0) {
+                    currentOrder = orderQueue.get(0);
+                }
+                Log.i("Main", "Back and done");
+            //}
+        }
     }
 
     public void receivedTrackerInfo(String info) {

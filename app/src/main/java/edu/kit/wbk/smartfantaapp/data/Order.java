@@ -10,7 +10,6 @@ import java.util.List;
 
 public class Order implements Serializable {
     public static final String ORDER = "order";
-    public static List<Order> orderQueue = new LinkedList<>();
 
 
 
