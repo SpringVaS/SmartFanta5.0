@@ -1,16 +1,18 @@
 package edu.kit.wbk.smartfantaapp.data;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class Order implements Serializable {
     public static final String ORDER = "order";
 
-    String variation;
-    String [][] objects;
-    String[] [] names;
-    String amounts[];
-    int batchAmount =1;
-    String station = "start";
+    public String variation;
+    public String [][] objects;
+    public String [][] names;
+    public String amounts[];
+    public int batchAmount = 1;
+    public String station = "start";
+
     public Order(String v, String[][] o, String[] a, String[][] n, int ba, String sta) {
         this.amounts = a;
         this.objects = o;
@@ -19,6 +21,15 @@ public class Order implements Serializable {
         this.station = sta;
 
     }
+
+    public HashMap<String, PickingProduct> getProductsToPick() {
+        HashMap<String, PickingProduct> map = new HashMap<>();
+        for(int i = 0; i < objects.length; i++) {
+            map.put(objects[i][0], new PickingProduct(objects[i][0], objects[i][1], names[i][0], names[i][1]));
+        }
+        return map;
+    }
+
     public static Order getOrderOne() {
        String [][] o = {{"Magnet lang 313540200","1"},{"Getriebegehäuse Typ 4 1395107154","1"},{"Anker Typ 4 3134339434","6"},{"Bürstenhalter Typ 2 3134339434","1"}};
        String  v = "1";

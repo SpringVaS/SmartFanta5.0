@@ -1,6 +1,7 @@
 package edu.kit.wbk.smartfantaapp.data;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
@@ -12,8 +13,10 @@ public class QrCode {
     private PointF point2;
     private PointF point3;
     private PointF point4;
-
     private PointF topLeft;
+    float bottom;
+
+    private String requestedAmount = "";
 
     public QrCode(Location location, String code) {
         point1 = location.getPoint1();
@@ -25,9 +28,22 @@ public class QrCode {
         calculateBottomLeft();
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public String getRequestedAmount() {
+        return requestedAmount;
+    }
+
+    public void setRequestedAmount(String requestedAmount) {
+        this.requestedAmount = requestedAmount;
+    }
+
     private void calculateBottomLeft() {
         topLeft.x = Math.min(point1.x, Math.min(point2.x, Math.min(point3.x, point4.x)));
         topLeft.y = Math.min(point1.y, Math.min(point2.y, Math.min(point3.y, point4.y)));
+        bottom = Math.max(point1.y, Math.max(point2.y, Math.max(point3.y, point4.y)));
     }
 
     public void scalePoints(float scale) {
@@ -55,8 +71,12 @@ public class QrCode {
     }
 
     public void render(Canvas canvas, Paint paint) {
+        paint.setColor(this.requestedAmount.equals("0") ? Color.RED : Color.GREEN);
         renderSquare(canvas, paint);
         paint.setTextSize(32);
+        paint.setFakeBoldText(true);
         canvas.drawText(this.code, topLeft.x, topLeft.y - 15, paint);
+        paint.setTextSize(64);
+        canvas.drawText(this.requestedAmount, topLeft.x, bottom, paint);
     }
 }
