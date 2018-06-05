@@ -77,6 +77,7 @@ public class RouteActivity extends Activity {
             text.setText("Get order to " + order.getStation());
 
             if (inDelivery) {
+                setResult(Activity.RESULT_OK);
                 finish();
             } else {
                 inDelivery = true;

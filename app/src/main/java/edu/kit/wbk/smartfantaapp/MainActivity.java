@@ -37,6 +37,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
     private QrCode[] scanResults = {};
+    private Intent intent;
 
    // private List<Order> orderQueue = new LinkedList<>();
     private Order currentOrder;
@@ -79,6 +80,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         overlayView = (OverlayView) findViewById(R.id.overlayView);
         this.overlayView.setZ(100);
         currentOrder = null;
+        intent = null;
 
         createScannerListener();
 
@@ -192,8 +194,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         }
     }
 
-    private boolean receivedOrder () {
-        return orderQueue.add(Order.getOrderOne());
+    private boolean receivedOrder (Order ord) {
+        return orderQueue.add(ord);
     }
 
     /*public List<Order> getOrderQueue() {
@@ -224,7 +226,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         scannerFragment.setArguments(args);
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, scannerFragment).commit();
         scannerFragment.setListener(mScannerListener);     // Required to get scan results
-        //new Tracker(this);
+        new Tracker(this);
     }
 
     @Override
@@ -233,14 +235,14 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
             if (currentOrder == null) {
                 takeOrder();
             } else {
-                Intent intent = new Intent(this, RouteActivity.class);
+                intent = new Intent(this, RouteActivity.class);
                 intent.putExtra(Order.ORDER, currentOrder);
                 startActivityForResult(intent, REQUEST_CODE);
 
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
-            receivedOrder();
+            receivedOrder(Order.getOrderOne());
         }
 
         return super.onKeyUp(keyCode, event);
@@ -255,9 +257,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
                 orderQueue.remove(currentOrder);
                 this.products.clear();
                 overlayView.setProducts(this.products.values());
-                if (orderQueue.size() > 0) {
-                    currentOrder = orderQueue.get(0);
-                }
+                currentOrder = null;
                 Log.i("Main", "Back and done");
             //}
         }
@@ -266,12 +266,14 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     public void receivedTrackerInfo(String info) {
         // TODO do stuff with info
 
-        if (info.equals("place Order")) {
-            receivedOrder();
+        if (info.equals("place order")) {
+            receivedOrder(Order.getRefillOrder());
+        } else if (info.equals(Tracker.SHELF)) {
+
         }
 
-        /*if(this.shouldTrack) {
+        if(this.shouldTrack) {
             new Tracker(this);
-        }*/
+        }
     }
 }

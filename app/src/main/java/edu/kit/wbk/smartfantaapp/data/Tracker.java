@@ -16,6 +16,7 @@ import edu.kit.wbk.smartfantaapp.MainActivity;
 public class Tracker {
     private MainActivity activity;
     public static boolean orderPlaced = false;
+    public static String SHELF = "shelf";
 
     public Tracker(MainActivity activity) {
         this.activity = activity;
@@ -47,9 +48,9 @@ public class Tracker {
         y = Double.valueOf(ystring);//person
 
         if (z <= -8 && z > -12) {
-            Log.e("test","Regal");
+            Log.e("test",Tracker.SHELF);
 
-            return ("Regal");
+            return (Tracker.SHELF);
             /*if (x <= 10.8 && x > 11.8) {
                 Log.e("test", "Regal 1");
                 return ("Regal 1");
@@ -65,7 +66,7 @@ public class Tracker {
             if (x <= 10) {
                 Log.e("test","Presse4");
 
-                return (" Presse 4");
+                return ("Presse 4");
             } else {
                 Log.e("test","Presse2");
 
