@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +16,8 @@ import com.vuzix.sdk.barcode.ScannerFragment;
 import com.vuzix.sdk.barcode.ScanningRect;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import edu.kit.wbk.smartfantaapp.data.Order;
 import edu.kit.wbk.smartfantaapp.data.PickingProduct;
@@ -22,10 +25,11 @@ import edu.kit.wbk.smartfantaapp.data.QrCode;
 
 public class MainActivity extends Activity implements PermissionsFragment.Listener {
     private static final String TAG_PERMISSIONS_FRAGMENT = "permissions";
+
     private View infoView;
     private OverlayView overlayView;
     private ScannerFragment.Listener mScannerListener;
-    private QrCode[] scanResults;
+    private QrCode[] scanResults = {};
 
     private Order currentOrder;
     private HashMap<String, PickingProduct> products = new HashMap<>();
@@ -37,6 +41,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         groups.put("Regal 3", "3");
         groups.put("Regal 4", "4");
     }
+
+    long lastScannedResult = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +73,24 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
 
         createScannerListener();
 
-        // Tracker.main();
+
+        final Handler handler = new Handler();
+        Timer timer = new Timer(false);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(System.currentTimeMillis() - lastScannedResult > 1500 && scanResults.length != 0) {
+                            clearScanResult();
+                        }
+                    }
+                });
+            }
+        };
+
+        timer.scheduleAtFixedRate(timerTask, 200, 200);
     }
 
     /**
@@ -76,6 +99,10 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
     @Override
     public void permissionsGranted() {
         showScanner();
+    }
+
+    private void clearScanResult() {
+        this.onScanFragmentScanResult(null, new ScanResult[0]);
     }
 
     /**
@@ -87,6 +114,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
      * @param results -  an array of ScanResult
      */
     private void onScanFragmentScanResult(Bitmap bitmap, ScanResult[] results) {
+        this.lastScannedResult = System.currentTimeMillis();
         this.scanResults = processResults(results);
         this.overlayView.setScanResults(this.scanResults);
     }
