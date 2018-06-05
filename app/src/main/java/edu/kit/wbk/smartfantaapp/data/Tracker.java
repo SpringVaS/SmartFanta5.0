@@ -3,29 +3,30 @@ package edu.kit.wbk.smartfantaapp.data;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import cz.msebera.android.httpclient.HttpRequest;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
+import edu.kit.wbk.smartfantaapp.MainActivity;
 
-public class Tracker {
+public class Tracker
+{
+    private MainActivity activity;
 
-    public Tracker() {
+    public Tracker(MainActivity activity) {
+        this.activity = activity;
         new NetworkTask().execute();
     }
 
     public static String json_crazy_stuff(String answer) {
         int index  = answer.indexOf("x");
         int indexz  = answer.indexOf("z");
-        String xstring = answer.substring(index +2, index +8);
-        String zstring = answer.substring(indexz +2, indexz +8);
+        String xstring = answer.substring(index +3, index +8);
+        String zstring = answer.substring(indexz +3, indexz +8);
 
         double x = 0;
         double z = 0;
@@ -57,18 +58,20 @@ public class Tracker {
                 return ("Presse 2");
             }
         } else return "somewhere";
-
+        Log.e("test",xstring);
+        Log.e("test", zstring);
         return "somewhere";
     }
 
 
-    private static class NetworkTask extends AsyncTask<Void, Void, String> {
+    private class NetworkTask extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
 
             StringBuilder builder = new StringBuilder();
             try (CloseableHttpClient client = HttpClients.createDefault()) {
                 HttpGet request = new HttpGet("http://192.168.43.26:8090/kinexon/data/current/all/");
+                Log.e("tracker", "Dooo");
                 HttpResponse response = client.execute(request);
                 BufferedReader bufReader = new BufferedReader(new InputStreamReader(
                         response.getEntity().getContent()));
@@ -90,6 +93,7 @@ public class Tracker {
 
         @Override
         protected void onPostExecute(String s) {
+            activity.receivedTrackerInfo(s);
             Log.e("net",s);
         }
     }

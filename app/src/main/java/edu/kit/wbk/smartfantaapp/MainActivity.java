@@ -43,7 +43,8 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         groups.put("Regal 4", "4");
     }
 
-    long lastScannedResult = 0;
+    private long lastScannedResult = 0;
+    private boolean shouldTrack = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,8 +206,7 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         scannerFragment.setArguments(args);
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, scannerFragment).commit();
         scannerFragment.setListener(mScannerListener);     // Required to get scan results
-        new Tracker();
-
+        new Tracker(this);
     }
 
     @Override
@@ -221,5 +221,12 @@ public class MainActivity extends Activity implements PermissionsFragment.Listen
         }
 
         return super.onKeyUp(keyCode, event);
+    }
+
+    public void receivedTrackerInfo(String info) {
+        // TODO do stuff with info
+        if(this.shouldTrack) {
+            new Tracker(this);
+        }
     }
 }
